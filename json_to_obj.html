@@ -20,6 +20,9 @@
 <label> Tube sides: </label>
 <input id="sidesInput" type="number" value="8" min="3" max="32">
 
+<label> Size multiplier: </label>
+<input id="sizeMultiplierInput" type="number" value="1" step="0.1">
+
 <br><br>
 
 <textarea id="jsonInput"></textarea>
@@ -32,6 +35,7 @@ function convertAndDownload() {
   const jsonText = document.getElementById("jsonInput").value;
   const scale = parseFloat(document.getElementById("scaleInput").value);
   const sides = parseInt(document.getElementById("sidesInput").value, 10);
+  const sizeMultiplier = parseFloat(document.getElementById("sizeMultiplierInput").value) || 1;
 
   let data;
   try {
@@ -41,11 +45,11 @@ function convertAndDownload() {
     return;
   }
 
-  const obj = polylineJsonToObj(data, scale, sides);
+  const obj = polylineJsonToObj(data, scale, sides, sizeMultiplier);
   downloadTextFile(obj, "polyline.obj");
 }
 
-function polylineJsonToObj(data, scale = 1, sides = 8) {
+function polylineJsonToObj(data, scale = 1, sides = 8, sizeMultiplier = 1) {
   let obj = "";
   let vertexIndex = 1;
 
@@ -65,7 +69,7 @@ function polylineJsonToObj(data, scale = 1, sides = 8) {
         const p1 = points[i];
         const p2 = points[i + 1];
 
-        const mesh = createTubeBetweenPoints(p1, p2, scale, sides);
+        const mesh = createTubeBetweenPoints(p1, p2, scale, sides, sizeMultiplier);
 
         for (const v of mesh.vertices) {
           obj += `v ${v.x.toFixed(6)} ${v.y.toFixed(6)} ${v.z.toFixed(6)}\n`;
@@ -84,7 +88,7 @@ function polylineJsonToObj(data, scale = 1, sides = 8) {
   return obj;
 }
 
-function createTubeBetweenPoints(p1, p2, scale, sides) {
+function createTubeBetweenPoints(p1, p2, scale, sides, sizeMultiplier) {
   const x1 = p1.x * scale;
   const y1 = -p1.y * scale;
   const x2 = p2.x * scale;
@@ -93,8 +97,8 @@ function createTubeBetweenPoints(p1, p2, scale, sides) {
   const z1 = 0;
   const z2 = 0;
 
-  const r1 = ((p1.size || 4) * scale) / 2;
-  const r2 = ((p2.size || 4) * scale) / 2;
+  const r1 = (((p1.size || 4) * sizeMultiplier) * scale) / 2;
+  const r2 = (((p2.size || 4) * sizeMultiplier) * scale) / 2;
 
   const dx = x2 - x1;
   const dy = y2 - y1;
