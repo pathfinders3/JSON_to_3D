@@ -201,6 +201,13 @@ function downloadTextFile(text, filename) {
 
   URL.revokeObjectURL(url);
 }
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedJson = localStorage.getItem("jsonInput");
+  if (savedJson !== null) {
+    document.getElementById("jsonInput").value = savedJson;
+  }
+});
 </script>
 
 </body>
