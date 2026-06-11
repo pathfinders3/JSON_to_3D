@@ -63,6 +63,8 @@ function convertAndDownload() {
   const sides = parseInt(document.getElementById("sidesInput").value, 10);
   const sizeMultiplier = parseFloat(document.getElementById("sizeMultiplierInput").value) || 1;
 
+  localStorage.setItem("jsonInput", jsonText);
+
   let data;
   try {
     data = JSON.parse(jsonText);
